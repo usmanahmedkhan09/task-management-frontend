@@ -10,7 +10,9 @@ export default {
     colors: {
       primary: '#2b2c37',
       secondary: '#20212c',
-      white: '#ffffff'
+      white: '#ffffff',
+      gary: '#828fa3',
+      purple: '#635fc7'
     },
     extend: {},
   },

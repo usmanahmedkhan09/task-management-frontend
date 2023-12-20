@@ -8,28 +8,35 @@ import Components from 'unplugin-vue-components/vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      template: {
+        transformAssetUrls: {
+          base: null,
+          includeAbsolute: false,
+        },
+      },
+    }),
     AutoImport({
-      include: [
-        /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-        /\.vue$/,
-        /\.vue\?vue/, // .vue
-        /\.md$/, // .md
-      ],
       imports: [
         'vue',
         'vue-router',
+        {
+          axios: [['default', 'axios']],
+        }
       ],
-      defaultExportByFilename: false,
-      dirs: []
+      dirs: [],
+      vueTemplate: true,
+      dts: './auto-imports.d.ts',
     }),
     Components({
       dirs: ['./src/components',],
+      directoryAsNamespace: true,
     }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+    },
+    extensions: ['.ts', '.vue', '.json'],
   }
 })
