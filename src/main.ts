@@ -12,6 +12,10 @@ import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
+import Checkbox from 'primevue/checkbox';
+import TieredMenu from 'primevue/tieredmenu';
+
+
 
 
 
@@ -37,5 +41,7 @@ app.component('Dialog', Dialog)
 app.component('InputText', InputText)
 app.component('Textarea', Textarea)
 app.component('Dropdown', Dropdown)
+app.component('Checkbox', Checkbox)
+app.component('TieredMenu', TieredMenu)
 app.use(ToastService);
 app.mount('#app')
