@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useBoardStore } from '@/stores/Board.store'
+import TaskComponent from '@/components/TaskComponent.vue'
 
 import { useListStore } from '@/stores/List.store'
 import { computed, onMounted, watch } from 'vue'
@@ -24,12 +25,13 @@ watch(
     <div class="min-w-[280px] h-auto" v-for="list in lists" :key="list.name">
       <p class="mb-4 text-[#828fa3] text-sm font-medium capitalize">{{ list.name }} (0)</p>
       <div class="overflow-x-auto h-full">
-        <div class="rounded-lg mb-5 px-5 py-4 w-[280px] bg-primary" v-for="x in 100" :key="x">
+        <TaskComponent :listId="list._id" />
+        <!-- <div class="rounded-lg mb-5 px-5 py-4 w-[280px] bg-primary" v-for="x in 100" :key="x">
           <p class="text-white font-medium text-sm">
             Review early feedback and plan next steps for roadmap
           </p>
           <p class="text-[#828fa3] text-xs">0 of 2 subtask</p>
-        </div>
+        </div> -->
       </div>
     </div>
     <div
