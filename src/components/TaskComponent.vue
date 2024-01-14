@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { onMounted, watch, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useTaskStore } from '@/stores/Task.store'
 import { useListStore } from '@/stores/List.store'
 import { useForm, Form, useFieldArray } from 'vee-validate'
 import { useValidators } from '@/composables/rules'
+import AddTaskPopup from './AddTaskPopup.vue'
+import TaskModel from '@/Models/Task.model'
 
 const props = defineProps({
   listId: {
@@ -13,6 +15,7 @@ const props = defineProps({
 })
 
 const subTaskModal = ref(false)
+const showModal = ref(false)
 const taskStore = useTaskStore()
 const listStore = useListStore()
 let lstId = ref(props.listId)
@@ -33,7 +36,7 @@ const tasks = computed(() => {
   return taskStore.getTaskByListId(props.listId as string) as any
 })
 
-const task = ref()
+const task = ref<TaskModel>(new TaskModel())
 const toggleTask = (payload: any) => {
   task.value = payload
   subTaskModal.value = true
@@ -45,8 +48,14 @@ const toggle = (event: any) => {
 
 const handleTaskAction = async (action: string) => {
   if (action == 'Edit') {
+    task.value.subtasks = task.value.subtasks.map((x) => {
+      return {
+        value: x.description
+      }
+    })
+    showModal.value = true
   } else {
-    await taskStore.deleteTask(task.value._id)
+    await taskStore.deleteTask(task.value._id as string)
   }
 }
 </script>
@@ -133,4 +142,11 @@ const handleTaskAction = async (action: string) => {
       </div>
     </template>
   </Dialog>
+  <AddTaskPopup
+    v-if="showModal"
+    :task="task"
+    :showModal="showModal"
+    @update:modelValue="showModal = false"
+    :isEdit="true"
+  />
 </template>

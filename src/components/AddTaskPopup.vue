@@ -5,8 +5,18 @@ import { useValidators } from '@/composables/rules'
 import TaskModel from '../Models/Task.model'
 
 const props = defineProps({
-  showModal: Boolean,
-  default: () => false
+  showModal: {
+    type: Boolean,
+    default: false
+  },
+  task: {
+    type: Object,
+    default: () => new TaskModel()
+  },
+  isEdit: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -22,7 +32,7 @@ const show = computed({
   get: () => props.showModal,
   set: (val) => emit('update:modelValue', false)
 })
-const task = ref(new TaskModel())
+const task = ref(props.task)
 const { taskSchema } = useValidators()
 const {
   handleSubmit,
@@ -33,7 +43,12 @@ const {
   setFieldValue,
   resetForm
 } = useForm({
-  initialValues: task,
+  initialValues: {
+    _id: task.value._id,
+    title: task.value.title,
+    description: task.value.description,
+    listId: task.value.listId
+  } as TaskModel,
   validationSchema: taskSchema
 })
 
@@ -45,11 +60,21 @@ const { remove, push, fields, replace } = useFieldArray<any>('subtasks')
 
 const onSubmit = handleSubmit(async (task: TaskModel) => {
   task.subtasks = task.subtasks.map((x: any) => ({ value: x.value || x }))
-  await taskStore.addTask(task)
+  if (props.isEdit) await taskStore.UpdateTask(task)
+  else await taskStore.addTask(task)
 })
 
 const setInitialState = () => {
   if (boardStore.board) task.value.listId = boardStore.board.lists[0] as any
+  if (props.isEdit) {
+    fields.value = task.value.subtasks.map((x: TaskModel) => {
+      return {
+        value: x.description,
+        ...x
+      }
+    }) as any
+    replace(fields.value)
+  }
 }
 
 onMounted(() => setInitialState())
@@ -119,6 +144,7 @@ onMounted(() => setInitialState())
               v-bind="listId"
               :options="boardStore.board.lists"
               optionLabel="name"
+              optionValue="_id"
               placeholder="Select a City"
               class="bg-primary text-white placeholder:text-white border-[#828fa340]"
               :pt="{

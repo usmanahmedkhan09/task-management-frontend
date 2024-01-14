@@ -8,7 +8,8 @@ export function useValidators()
     });
 
     const taskSchema = yup.object({
-        title: yup.string().required()
+        _id: yup.string(),
+        title: yup.string().required(),
     })
     return { boardSchema, taskSchema }
 }
