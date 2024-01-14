@@ -69,7 +69,7 @@ export const useTaskStore = defineStore('tasks', () =>
             return response
         } catch (e)
         {
-
+            console.log(e)
         }
     }
 
