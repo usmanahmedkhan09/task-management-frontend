@@ -65,8 +65,14 @@ export const useTaskStore = defineStore('tasks', () =>
         try
         {
             let response: any = await axios.delete(`/tasks/deleteTask/${id}`)
-            toast.add({ severity: 'success', summary: 'Success Message', detail: response.message, life: 3000 });
-            return response
+            console.log(tasks.value)
+            let index = tasks.value.findIndex((x) => x._id == response.data._id)
+            if (index != -1)
+            {
+                tasks.value.splice(index, 1)
+                toast.add({ severity: 'success', summary: 'Success Message', detail: response.message, life: 3000 });
+            }
+
         } catch (e)
         {
             console.log(e)
