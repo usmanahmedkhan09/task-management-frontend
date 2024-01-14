@@ -2,13 +2,19 @@ import { defineStore } from 'pinia'
 import axios from '@/axios/axios'
 import { useToast } from 'primevue/usetoast';
 import Task from '../Models/Task.model'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 
 export const useTaskStore = defineStore('tasks', () =>
 {
     const toast = useToast();
     const tasks = ref<Task[]>([])
+
+
+    const getTaskByListId = (id: string) =>
+    {
+        return tasks.value.filter((x: any) => x.listId == id)
+    }
 
 
     async function addTask(task: Task)
@@ -35,8 +41,6 @@ export const useTaskStore = defineStore('tasks', () =>
             if (response.success)
             {
                 toast.add({ severity: 'success', summary: 'Success Message', detail: response.message, life: 3000 });
-                console.log(response.data)
-                // boards.value.push(response.data)
             }
         } catch (e)
         {
@@ -44,17 +48,30 @@ export const useTaskStore = defineStore('tasks', () =>
         }
     }
 
-    async function getAllTasks(id: string)
+    async function getAllTasks()
     {
         try
         {
-            let response: any = await axios.get(`/tasks/getTaskByList/${id}`)
-            return response
+            let response: any = await axios.get(`/tasks/getAllTasks`)
+            tasks.value = [...response.data]
         } catch (e)
         {
             console.log(e)
         }
     }
 
-    return { addTask, UpdateTask, getAllTasks }
+    async function deleteTask(id: string)
+    {
+        try
+        {
+            let response: any = await axios.delete(`/tasks/deleteTask/${id}`)
+            toast.add({ severity: 'success', summary: 'Success Message', detail: response.message, life: 3000 });
+            return response
+        } catch (e)
+        {
+
+        }
+    }
+
+    return { addTask, UpdateTask, getAllTasks, deleteTask, tasks, getTaskByListId }
 })

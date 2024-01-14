@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useBoardStore } from '@/stores/Board.store'
 import ListItems from '@/components/ListItems.vue'
-
 import { useListStore } from '@/stores/List.store'
+import { useTaskStore } from '@/stores/Task.store'
 import { computed, onMounted, watch } from 'vue'
 
 const boardStore = useBoardStore()
+const { getAllTasks } = useTaskStore()
 const { toggleBoard } = boardStore
 
 const lists = computed(() => {
@@ -19,6 +20,8 @@ watch(
     listStore.getBoardLists(boardStore.board._id)
   }
 )
+
+onMounted(() => getAllTasks())
 </script>
 <template>
   <div class="flex gap-4 h-full" v-if="lists.length > 0">

@@ -12,13 +12,13 @@ const props = defineProps({
   }
 })
 
-const tasks = ref<any[]>([])
 const subTaskModal = ref(false)
 const taskStore = useTaskStore()
 const listStore = useListStore()
 let lstId = ref(props.listId)
 let menu = ref()
-const options = ref([
+
+const options = ref<any>([
   {
     label: 'Edit',
     icon: 'pi pi-file'
@@ -29,12 +29,9 @@ const options = ref([
   }
 ])
 
-const getAllTask = async () => {
-  let response: any = await taskStore.getAllTasks(props.listId as string)
-  if (response.success) {
-    tasks.value = response.data
-  }
-}
+const tasks = computed(() => {
+  return taskStore.getTaskByListId(props.listId as string) as any
+})
 
 const task = ref()
 const toggleTask = (payload: any) => {
@@ -46,9 +43,12 @@ const toggle = (event: any) => {
   menu.value.toggle(event)
 }
 
-onMounted(() => {
-  getAllTask()
-})
+const handleTaskAction = async (action: string) => {
+  if (action == 'Edit') {
+  } else {
+    await taskStore.deleteTask(task.value._id)
+  }
+}
 </script>
 <template>
   <div
@@ -57,10 +57,10 @@ onMounted(() => {
     :key="x"
     @click="toggleTask(x)"
   >
-    <p class="text-white font-medium text-sm">
+    <p class="text-white font-medium text-sm capitalize">
       {{ x.title }}
     </p>
-    <p class="text-[#828fa3] text-xs" v-if="x.subtasks.length">
+    <p class="text-[#828fa3] text-xs" v-if="x.subtasks?.length">
       {{ x.subtasks.filter((x) => x.isComplete).length }} of {{ x.subtasks.length }} subtask
     </p>
   </div>
@@ -68,7 +68,7 @@ onMounted(() => {
     <template #container="{}">
       <div class="p-8 flex flex-col w-50 dark:bg-primary bg-white rounded">
         <div class="flex justify-between items-center mb-5">
-          <h3 class="text-white font-semibold">{{ task.title }}</h3>
+          <h3 class="text-white font-semibold capitalize">{{ task.title }}</h3>
           <i @click="toggle" class="pi pi-ellipsis-v text-white" />
           <TieredMenu
             ref="menu"
@@ -81,15 +81,16 @@ onMounted(() => {
             }"
           >
             <template #item="{ item }">
-              <span class="text-white mb-2">{{ item.label }}</span>
+              <span class="text-white mb-2" @click="handleTaskAction(item.label)">{{
+                item.label
+              }}</span>
             </template>
           </TieredMenu>
         </div>
         <p class="text-sm text-[#828fa3] mb-5">
-          c
           {{ task.description }}
         </p>
-        <p class="text-[#828fa3] mb-4 font-bold" v-if="task.subtask.length">
+        <p class="text-[#828fa3] mb-4 font-bold" v-if="task && task.subtask?.length">
           Subtasks ({{ task.subtasks.filter((x) => x.isComplete).length }} of
           {{ task.subtasks.length }})
         </p>

@@ -13,6 +13,7 @@ const emit = defineEmits(['update:modelValue'])
 
 import { useBoardStore } from '@/stores/Board.store'
 import { useTaskStore } from '@/stores/Task.store'
+import { list } from 'postcss'
 
 const boardStore = useBoardStore()
 const taskStore = useTaskStore()
