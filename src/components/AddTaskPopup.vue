@@ -59,7 +59,7 @@ const listId = defineComponentBinds('listId')
 const { remove, push, fields, replace } = useFieldArray<any>('subtasks')
 
 const onSubmit = handleSubmit(async (task: TaskModel) => {
-  task.subtasks = task.subtasks.map((x: any) => ({ value: x.value || x }))
+  task.subtasks = task.subtasks.map((x: any) => ({ value: x.value || x, ...x }))
   if (props.isEdit) await taskStore.UpdateTask(task)
   else await taskStore.addTask(task)
 })
@@ -83,7 +83,7 @@ onMounted(() => setInitialState())
   <Dialog v-model:visible="show" modal :style="{ width: '480px' }" :dismissableMask="true">
     <template #container="{}">
       <div class="p-8 flex flex-col w-50 dark:bg-primary bg-white rounded">
-        <h3 class="text-white font-semibold">Add New Task</h3>
+        <h3 class="text-white font-semibold">{{ isEdit ? 'Update' : 'Add New' }} Task</h3>
         <form class="mt-5" @submit="onSubmit">
           <div class="flex flex-col gap-5">
             <div class="flex flex-col field">
@@ -136,7 +136,7 @@ onMounted(() => setInitialState())
             <Button
               @click="push('')"
               iconClass="mx-auto"
-              label="Add New Subtask"
+              :label="isEdit ? 'Update Subtasks' : 'Add New Subtasks'"
               severity="success"
               class="rounded-full bg-white text-purple font-bold w-full"
             />
@@ -160,7 +160,7 @@ onMounted(() => setInitialState())
             <Button
               :loading="isSubmitting"
               type="submit"
-              :label="'Create New Task'"
+              :label="isEdit ? 'Update Task' : 'Create New Task'"
               severity="success"
               class="rounded-full bg-[#635fc7] text-white w-full font-bold"
             />

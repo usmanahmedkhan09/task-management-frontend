@@ -50,7 +50,8 @@ const handleTaskAction = async (action: string) => {
   if (action == 'Edit') {
     task.value.subtasks = task.value.subtasks.map((x) => {
       return {
-        value: x.description
+        value: x.description,
+        ...x
       }
     })
     showModal.value = true
