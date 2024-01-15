@@ -77,6 +77,12 @@ const setInitialState = () => {
   }
 }
 
+const removeSubTask = (subtaskId: any) => {
+  let subtask: any = fields.value[subtaskId]
+  if (subtask._id) {
+    // taskStore.deleteSubTask(subtask._id)
+  }
+}
 onMounted(() => setInitialState())
 </script>
 <template>
@@ -129,7 +135,7 @@ onMounted(() => setInitialState())
                     v-model="field.value"
                     type="text"
                   />
-                  <i @click="remove(idx)" class="pi pi-times text-white mt-3" />
+                  <i @click="removeSubTask(idx)" class="pi pi-times text-white mt-3" />
                 </div>
               </div>
             </div>
