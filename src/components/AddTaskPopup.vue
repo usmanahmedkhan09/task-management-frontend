@@ -3,6 +3,9 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useForm, Form, useFieldArray } from 'vee-validate'
 import { useValidators } from '@/composables/rules'
 import TaskModel from '../Models/Task.model'
+import { useSubTasksStore } from '@/stores/Subtask.store'
+import { useBoardStore } from '@/stores/Board.store'
+import { useTaskStore } from '@/stores/Task.store'
 
 const props = defineProps({
   showModal: {
@@ -21,12 +24,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-import { useBoardStore } from '@/stores/Board.store'
-import { useTaskStore } from '@/stores/Task.store'
-import { list } from 'postcss'
-
 const boardStore = useBoardStore()
 const taskStore = useTaskStore()
+const SubTasksStore = useSubTasksStore()
 
 const show = computed({
   get: () => props.showModal,
@@ -77,11 +77,12 @@ const setInitialState = () => {
   }
 }
 
-const removeSubTask = (subtaskId: any) => {
+const removeSubTask = async (subtaskId: any) => {
   let subtask: any = fields.value[subtaskId]
   if (subtask._id) {
-    // taskStore.deleteSubTask(subtask._id)
+    await SubTasksStore.deleteSubTask(subtask._id)
   }
+  remove(subtaskId)
 }
 onMounted(() => setInitialState())
 </script>
@@ -142,7 +143,7 @@ onMounted(() => setInitialState())
             <Button
               @click="push('')"
               iconClass="mx-auto"
-              :label="isEdit ? 'Update Subtasks' : 'Add New Subtasks'"
+              :label="'Add New Subtasks'"
               severity="success"
               class="rounded-full bg-white text-purple font-bold w-full"
             />
