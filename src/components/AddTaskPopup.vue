@@ -47,7 +47,7 @@ const {
     _id: task.value._id,
     title: task.value.title,
     description: task.value.description,
-    listId: task.value.listId
+    listId: task.value.listId ?? boardStore.board.lists[0]._id
   } as TaskModel,
   validationSchema: taskSchema
 })
@@ -59,13 +59,14 @@ const listId = defineComponentBinds('listId')
 const { remove, push, fields, replace } = useFieldArray<any>('subtasks')
 
 const onSubmit = handleSubmit(async (task: TaskModel) => {
-  task.subtasks = task.subtasks.map((x: any) => ({ value: x.value || x, ...x }))
+  if (task.subtasks && task.subtasks.length > 0)
+    task.subtasks = task.subtasks.map((x: any) => ({ value: x.value || x, ...x }))
+
   if (props.isEdit) await taskStore.UpdateTask(task)
   else await taskStore.addTask(task)
 })
 
 const setInitialState = () => {
-  if (boardStore.board) task.value.listId = boardStore.board.lists[0] as any
   if (props.isEdit) {
     fields.value = task.value.subtasks.map((x: TaskModel) => {
       return {
@@ -152,7 +153,7 @@ onMounted(() => setInitialState())
               :options="boardStore.board.lists"
               optionLabel="name"
               optionValue="_id"
-              placeholder="Select a City"
+              placeholder="Select a List"
               class="bg-primary text-white placeholder:text-white border-[#828fa340]"
               :pt="{
                 root: { class: 'placeholder:text-white' },
