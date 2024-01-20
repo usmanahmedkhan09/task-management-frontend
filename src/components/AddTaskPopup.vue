@@ -34,20 +34,13 @@ const show = computed({
 })
 const task = ref(props.task)
 const { taskSchema } = useValidators()
-const {
-  handleSubmit,
-  isSubmitting,
-  errors,
-  defineComponentBinds,
-  setValues,
-  setFieldValue,
-  resetForm
-} = useForm({
+const { handleSubmit, isSubmitting, errors, defineComponentBinds } = useForm({
   initialValues: {
     _id: task.value._id,
     title: task.value.title,
     description: task.value.description,
-    listId: task.value.listId ?? boardStore.board.lists[0]._id
+    listId: task.value.listId ?? boardStore.board.lists[0]._id,
+    subtasks: task.value.subtasks
   } as TaskModel,
   validationSchema: taskSchema
 })
@@ -60,10 +53,14 @@ const { remove, push, fields, replace } = useFieldArray<any>('subtasks')
 
 const onSubmit = handleSubmit(async (task: TaskModel) => {
   if (task.subtasks && task.subtasks.length > 0)
-    task.subtasks = task.subtasks.map((x: any) => ({ value: x.value || x, ...x }))
+    task.subtasks = task.subtasks.map((x: any) =>
+      x.value ? { value: x.value, ...x } : { value: x }
+    )
 
   if (props.isEdit) await taskStore.UpdateTask(task)
   else await taskStore.addTask(task)
+
+  show.value = false
 })
 
 const setInitialState = () => {
