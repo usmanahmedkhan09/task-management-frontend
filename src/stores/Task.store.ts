@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import axios from '@/axios/axios'
 import { useToast } from 'primevue/usetoast';
 import Task from '../Models/Task.model'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 
 export const useTaskStore = defineStore('tasks', () =>
@@ -21,7 +21,7 @@ export const useTaskStore = defineStore('tasks', () =>
     {
         try
         {
-            let response: any = await axios.post('/tasks/addTask', task)
+            const response: any = await axios.post('/tasks/addTask', task)
             if (response.success)
             {
                 toast.add({ severity: 'success', summary: 'Success Message', detail: response.message, life: 3000 });
@@ -37,9 +37,14 @@ export const useTaskStore = defineStore('tasks', () =>
     {
         try
         {
-            let response: any = await axios.put(`/tasks/updateTask/${task._id}`, task)
+            const response: any = await axios.put(`/tasks/updateTask/${task._id}`, task)
             if (response.success)
             {
+                const index = tasks.value.findIndex((x) => x._id == response.data._id)
+                if (index != -1)
+                {
+                    tasks.value[index] = response.data
+                }
                 toast.add({ severity: 'success', summary: 'Success Message', detail: response.message, life: 3000 });
             }
         } catch (e)
@@ -52,7 +57,7 @@ export const useTaskStore = defineStore('tasks', () =>
     {
         try
         {
-            let response: any = await axios.get(`/tasks/getAllTasks`)
+            const response: any = await axios.get(`/tasks/getAllTasks`)
             tasks.value = [...response.data]
         } catch (e)
         {
@@ -64,9 +69,8 @@ export const useTaskStore = defineStore('tasks', () =>
     {
         try
         {
-            let response: any = await axios.delete(`/tasks/deleteTask/${id}`)
-            console.log(tasks.value)
-            let index = tasks.value.findIndex((x) => x._id == response.data._id)
+            const response: any = await axios.delete(`/tasks/deleteTask/${id}`)
+            const index = tasks.value.findIndex((x) => x._id == response.data._id)
             if (index != -1)
             {
                 tasks.value.splice(index, 1)
