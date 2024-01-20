@@ -2,8 +2,6 @@
 import { ref, computed } from 'vue'
 import { useTaskStore } from '@/stores/Task.store'
 import { useListStore } from '@/stores/List.store'
-import { useForm, Form, useFieldArray } from 'vee-validate'
-import { useValidators } from '@/composables/rules'
 import AddTaskPopup from './AddTaskPopup.vue'
 import TaskModel from '@/Models/Task.model'
 
@@ -57,6 +55,7 @@ const handleTaskAction = async (action: string) => {
     showModal.value = true
   } else {
     await taskStore.deleteTask(task.value._id as string)
+    subTaskModal.value = false
   }
 }
 </script>
@@ -147,7 +146,7 @@ const handleTaskAction = async (action: string) => {
     v-if="showModal"
     :task="task"
     :showModal="showModal"
-    @update:modelValue="showModal = false"
+    @update:modelValue=";(showModal = false), (subTaskModal = false)"
     :isEdit="true"
   />
 </template>
