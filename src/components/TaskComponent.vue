@@ -2,12 +2,20 @@
 import { ref, computed } from 'vue'
 import { useTaskStore } from '@/stores/Task.store'
 import { useListStore } from '@/stores/List.store'
-import AddTaskPopup from './AddTaskPopup.vue'
+// import AddTaskPopup from './AddTaskPopup.vue'
 import TaskModel from '@/Models/Task.model'
 
 const props = defineProps({
   listId: {
     type: String,
+    required: true
+  },
+  task: {
+    type: [TaskModel, Object],
+    required: true
+  },
+  tasks: {
+    type: Array,
     required: true
   }
 })
@@ -30,11 +38,13 @@ const options = ref<any>([
   }
 ])
 
-const tasks = computed(() => {
-  return taskStore.getTaskByListId(props.listId as string) as any
-})
+// const tasks = computed(() => {
+//   return taskStore.getTaskByListId(props.listId as string) as any
+// })
 
-const task = ref<TaskModel>(new TaskModel())
+// const el = ref<HTMLElement | null>()
+
+const task = ref<TaskModel>(props.task as TaskModel)
 const toggleTask = (payload: any) => {
   task.value = payload
   subTaskModal.value = true
@@ -62,17 +72,16 @@ const handleTaskAction = async (action: string) => {
 <template>
   <div
     class="rounded-lg mb-5 px-5 py-4 w-[280px] bg-primary cursor-pointer"
-    v-for="x in tasks"
-    :key="x"
-    @click="toggleTask(x)"
+    @click="toggleTask(task)"
   >
     <p class="text-white font-medium text-sm capitalize">
-      {{ x.title }}
+      {{ task.title }}
     </p>
-    <p class="text-[#828fa3] text-xs" v-if="x.subtasks?.length">
-      {{ x.subtasks.filter((x) => x.isComplete).length }} of {{ x.subtasks.length }} subtask
+    <p class="text-[#828fa3] text-xs" v-if="task.subtasks?.length">
+      {{ task.subtasks.filter((x) => x.isComplete).length }} of {{ task.subtasks.length }} subtask
     </p>
   </div>
+
   <Dialog v-model:visible="subTaskModal" modal :style="{ width: '480px' }" :dismissableMask="true">
     <template #container="{}">
       <div class="p-8 flex flex-col w-50 dark:bg-primary bg-white rounded">

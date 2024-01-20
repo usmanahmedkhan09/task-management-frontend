@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useBoardStore } from '@/stores/Board.store'
-import ListItems from '@/components/ListItems.vue'
 import { useListStore } from '@/stores/List.store'
 import { useTaskStore } from '@/stores/Task.store'
 import { computed, onMounted, watch } from 'vue'
