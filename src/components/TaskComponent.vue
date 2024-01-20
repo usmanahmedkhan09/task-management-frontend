@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { useTaskStore } from '@/stores/Task.store'
 import { useListStore } from '@/stores/List.store'
-// import AddTaskPopup from './AddTaskPopup.vue'
 import TaskModel from '@/Models/Task.model'
 
 const props = defineProps({
@@ -27,7 +26,7 @@ const listStore = useListStore()
 let lstId = ref(props.listId)
 let menu = ref()
 
-const options = ref<any>([
+const options = ref<any[]>([
   {
     label: 'Edit',
     icon: 'pi pi-file'
@@ -37,12 +36,6 @@ const options = ref<any>([
     icon: 'pi pi-file'
   }
 ])
-
-// const tasks = computed(() => {
-//   return taskStore.getTaskByListId(props.listId as string) as any
-// })
-
-// const el = ref<HTMLElement | null>()
 
 const task = ref<TaskModel>(props.task as TaskModel)
 const toggleTask = (payload: any) => {
@@ -73,6 +66,7 @@ const handleTaskAction = async (action: string) => {
   <div
     class="rounded-lg mb-5 px-5 py-4 w-[280px] bg-primary cursor-pointer"
     @click="toggleTask(task)"
+    :id="task._id"
   >
     <p class="text-white font-medium text-sm capitalize">
       {{ task.title }}
@@ -108,7 +102,7 @@ const handleTaskAction = async (action: string) => {
         <p class="text-sm text-[#828fa3] mb-5">
           {{ task.description }}
         </p>
-        <p class="text-[#828fa3] mb-4 font-bold" v-if="task && task.subtask?.length">
+        <p class="text-[#828fa3] mb-4 font-bold" v-if="task && task.subtasks?.length">
           Subtasks ({{ task.subtasks.filter((x) => x.isComplete).length }} of
           {{ task.subtasks.length }})
         </p>

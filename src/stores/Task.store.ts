@@ -83,5 +83,18 @@ export const useTaskStore = defineStore('tasks', () =>
         }
     }
 
-    return { addTask, UpdateTask, getAllTasks, deleteTask, tasks, getTaskByListId }
+    async function updateTaskList(taskId: string, listId: string)
+    {
+        try
+        {
+            const response: any = await axios.post(`/tasks/updateTaskList`, { taskId: taskId, listId: listId })
+            console.log(response)
+
+        } catch (e)
+        {
+            console.log(e)
+        }
+    }
+
+    return { addTask, UpdateTask, getAllTasks, deleteTask, tasks, getTaskByListId, updateTaskList }
 })

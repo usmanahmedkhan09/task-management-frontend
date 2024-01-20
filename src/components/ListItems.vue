@@ -23,7 +23,14 @@ useSortable(`#${props.list?.name.split(' ').join('')}`, tasks.value, {
     put: true,
     pull: true
   },
-  animation: 500
+  animation: 500,
+  onAdd: async function (e: any) {
+    let data = {
+      listId: e.to.getAttribute('listId'),
+      taskId: e.item.getAttribute('id')
+    }
+    await taskStore.updateTaskList(data.taskId, data.listId)
+  }
 })
 </script>
 
@@ -32,7 +39,11 @@ useSortable(`#${props.list?.name.split(' ').join('')}`, tasks.value, {
     <p class="mb-4 text-[#828fa3] text-sm font-medium capitalize">
       {{ list?.name }} ({{ tasks.length }})
     </p>
-    <div class="overflow-x-auto h-full shared" :id="list?.name.split(' ').join('')">
+    <div
+      class="overflow-x-auto h-full shared"
+      :listId="list?._id"
+      :id="list?.name.split(' ').join('')"
+    >
       <TaskComponent
         v-for="task in tasks"
         :key="task._id"
